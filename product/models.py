@@ -8,8 +8,8 @@ from account.models import CustomerUser
 
 # region Brand
 class Brand(models.Model):
-    brand_title = models.CharField( max_length=250, verbose_name='عنوان برند')
-    brand_image = models.ImageField(upload_to='media/', verbose_name='لوگو')
+    brand_title = models.CharField(max_length=250, verbose_name='عنوان برند')
+    brand_image = models.ImageField(upload_to='media/', verbose_name='لوگو',null=True, blank=True)
     brand_image_alt = models.CharField(max_length=100, null=True, blank=True, verbose_name='متن جایگزین لوگو')
     brand_image_title = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان لوگو')
     register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ ساخت')
@@ -25,16 +25,15 @@ class Brand(models.Model):
 # endregion
 
 # region Product Group
-class Category(models.Model):
-    title = models.CharField(max_length=100, verbose_name='عنوان دسته بندی')
-    image = models.ImageField(upload_to='products/groups/', blank=True, null=True, verbose_name='لوگو دسته بندی')
-    image_alt = models.CharField(max_length=100, null=True, blank=True, verbose_name='متن جایگزین لوگو')
-    image_title = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان لوگو')
-
-    register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ ساخت')
+class ProductGroup(models.Model):
+    group_title = models.CharField(max_length=100, verbose_name='عنوان گروه کالا')
+    group_image = models.ImageField(upload_to='products/groups/', blank=True, null=True,
+                                    verbose_name='لوگو دسته بندی')
+    group_image_alt = models.CharField(max_length=100, null=True, blank=True, verbose_name='متن جایگزین لوگو')
+    group_image_title = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان لوگو')
 
     def __str__(self):
-        return self.title
+        return self.group_title
 
     class Meta:
         verbose_name = 'دسته بندی'
@@ -70,10 +69,12 @@ class Product(models.Model):
     product_view_count = models.IntegerField(default=0, verbose_name='تعداد بازدید')
     product_sell_count = models.IntegerField(default=0, verbose_name='تعداد فروش')
     register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ درج')
-    product_group = models.ManyToManyField(Category, verbose_name='دسته بندی کالا', related_name='products_category')
+    music = models.FileField(upload_to='media/product/music/', verbose_name='صدای محصول', null=True, blank=True)
+
+    product_group = models.ForeignKey(ProductGroup, on_delete=models.CASCADE,verbose_name='گروه کالا', related_name='products_of_groups')
     brand = models.ForeignKey(Brand, verbose_name='برند کالا', null=True, on_delete=models.CASCADE,
                               related_name='brands')
-    features = models.ManyToManyField(Feature, through='ProductFeature')
+
 
     def after_discount(self):
         self.product_after_discount = self.price - ((self.price * self.product_discount) / 100)
@@ -92,7 +93,7 @@ class Product(models.Model):
 # region Product Feature
 class ProductFeature(models.Model):
     feature_value = models.CharField(max_length=200, verbose_name='مقدار ویژگی')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='محصول')
+    product = models.ForeignKey(Product,related_name='feature_product', on_delete=models.CASCADE, verbose_name='محصول')
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE, verbose_name='ویژگی')
 
     def __str__(self):
@@ -132,6 +133,4 @@ class Rating(models.Model):
 
 class WishList(models.Model):
     user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE, verbose_name="کاربر")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name="محصول")
-
-
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="محصول")

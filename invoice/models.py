@@ -29,7 +29,6 @@ class Order(models.Model):
         verbose_name_plural = "سبدهای خرید کاربران"
 
     def calculate_total_price(self):
-
         total = 0
 
         for order_detail in self.orderdetail_set.all():

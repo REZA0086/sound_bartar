@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
 from .models import (Product, Brand, Feature, ProductFeature,
-                     ProductGallery)
+                     ProductGallery, ProductGroup)
 
 
 # region Brand
@@ -100,12 +100,9 @@ class ProductGalleryStackedInline(admin.StackedInline):
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         'product_name', 'id', 'product_discount', 'product_after_discount',
-        'exist_count', 'product_view_count', 'product_sell_count',
+        'product_sell_count',
         'register_date',)
 
-    actions = [de_active_product, active_product]
-
-    inlines = [ProductFeatureInstanceAdminInline, ProductGalleryStackedInline]
 
     de_active_product.short_description = 'غیرفعال سازی کالا های انتخابی'
     active_product.short_description = 'فعال سازی کالا های انتخابی'
@@ -164,4 +161,9 @@ class ProductGalleryAdmin(admin.ModelAdmin):
     active_product_gallery.short_description = 'فعال سازی عکس از گالری محصول انتخابی'
     de_active_product_gallery.short_description = 'غیرفعال کردن عکس از گالری محصول انتخابی'
 
+
 # endregion
+
+@admin.register(ProductGroup)
+class ProductGroupAdmin(admin.ModelAdmin):
+    list_display = ('group_title',)

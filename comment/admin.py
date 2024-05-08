@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProductComment
+from comment.models import ProductComment,Comment
 
 
 def active_comment(modeladmin, request, queryset):
@@ -20,3 +20,7 @@ class ProductCommentAdmin(admin.ModelAdmin):
     actions = [active_comment, de_active_comment]
     active_comment.short_description = 'فعال کردن نظرات انتخابی'
     de_active_comment.short_description = 'غیرفعال کردن نظرات انتخابی'
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('user','comment')

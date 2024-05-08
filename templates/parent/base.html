@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+    {% endblock %}</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+</head>
+<body>
+
+
+{% include 'partial/header.html' %}
+{% block content %}
+
+{% endblock %}
+{% include 'partial/footer.html' %}
+
+
+
+
+<script src="{% static 'js/jquery-3.5.1.js' %}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            toastr.{{ message.tags }}('{{ message }}')
+        {% endfor %}
+    {% endif %}
+</script>
+
+
+
+</body>
+</html>

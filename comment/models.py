@@ -5,12 +5,20 @@ from django_jalali.db import models as jmodels
 import jdatetime
 
 
+class Comment(models.Model):
+    comment = models.TextField(verbose_name="نظر در مورد سایت")
+    register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ درج')
+    is_active = models.BooleanField(default=False, verbose_name='تایید / عدم تایید')
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE, related_name='user_comment', verbose_name='کاربر ')
+
+
 class ProductComment(models.Model):
-    comment = models.TextField(verbose_name='نظر')
+    comment = models.TextField(verbose_name='نظر درمورد محصول')
     register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ درج')
     is_active = models.BooleanField(default=False, verbose_name='تایید / عدم تایید')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_comment', verbose_name='محصول')
-    user = models.ForeignKey(CustomerUser, on_delete=models.PROTECT, related_name='user_comment', verbose_name='کاربر ')
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE, related_name='user_comment_product',
+                             verbose_name='کاربر ')
 
     class Meta:
         verbose_name = 'نظرات محصول'

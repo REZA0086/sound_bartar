@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class SiteSettigsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'site_settigs'
+    name = 'site_settings'

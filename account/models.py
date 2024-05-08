@@ -33,7 +33,7 @@ class CustomerUser(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(blank=True, null=True, max_length=200, verbose_name='ایمیل')
     name = models.CharField(max_length=50, verbose_name='نام')
     family = models.CharField(max_length=50, verbose_name='نام خانوادگی')
-    image = models.ImageField(upload_to='users/', verbose_name='عکس پروفایل کاربری', blank=True, null=True)
+    image = models.ImageField(upload_to='media/users/', verbose_name='عکس پروفایل کاربری', blank=True, null=True)
 
     register_date = jmodels.jDateField(default=jdatetime.date.today(), verbose_name='تاریخ ثبت نام')
     active_code = models.CharField(max_length=10, blank=True, null=True, )

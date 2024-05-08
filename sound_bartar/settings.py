@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django_jalali',
     'ckeditor',
     'ckeditor_uploader',
+    'sweetify',
 
     'account.apps.AccountConfig',
     'slider.apps.SliderConfig',
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'comment.apps.CommentConfig',
     'invoice.apps.InvoiceConfig',
     'paymentgateway.apps.PaymentgatewayConfig',
+    'site_settings.apps.SiteSettigsConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -166,3 +168,8 @@ MEDIA_ROOT = path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'account.CustomerUser'
+
+
+
+
+
