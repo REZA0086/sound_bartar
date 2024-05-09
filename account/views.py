@@ -15,13 +15,11 @@ def generate_random_number():
 
 
 class LoginView(View):
-
+    template_name = 'page/account/login.html'
     def get(self, request):
         login_form = LoginForm()
-        opt_code = generate_random_number()
 
-        request.session['opt_code'] = opt_code
-        return render(request, 'page/account/login.html', {'form': login_form})
+        return render(request, self.template_name, {'form': login_form})
 
     def post(self, request):
         login_form = LoginForm(request.POST)
@@ -32,9 +30,6 @@ class LoginView(View):
         try:
             user = CustomerUser.objects.get(user_phone=user_phone)
             if user.is_active == False:
-                data = {'bodyId': 0000, 'to': f'{user_phone}', 'args': [str(opt_code)]}
-                response = requests.post('http://127.0.0.1:8000', json=data)
-                print(opt_code)
                 if code == opt_code:
                     if user.check_password(login_form.data['password']):
                         user.is_active = True
@@ -53,7 +48,7 @@ class LoginView(View):
             messages.error(request, 'کاربر مورد نظر با این شماره تلفن یافت نشد')
 
         context = {'form': login_form}
-        return render(request, 'page/account/login.html', context)
+        return render(request, self.template_name, context)
 
 
 class RegisterView(View):
@@ -85,6 +80,11 @@ class RegisterView(View):
                     password=password
                 )
                 messages.success(request, 'ثبت نام با موفقیت انجام شد')
+                opt_code = generate_random_number()
+                print(opt_code)
+                request.session['opt_code'] = opt_code
+                data = {'bodyId': 0000, 'to': f'{user_phone}', 'args': [str(opt_code)]}
+                response = requests.post('http://127.0.0.1:8000', json=data)
                 return redirect('account:login')
         else:
             messages.error(request, 'فرم شما نامعتبر است')
@@ -99,7 +99,7 @@ class RecoveryPass(View):
 
     def get(self, request, *args, **kwargs):
         form = RecoveryPassForm()
-        return render(request, 'page/account/recovery_pass.html', context={'form': form})
+        return render(request, self.template_name, context={'form': form})
 
     def post(self, request, *args, **kwargs):
         form = RecoveryPassForm(request.POST)
@@ -109,6 +109,11 @@ class RecoveryPass(View):
 
             user = CustomerUser.objects.filter(user_phone=user_phone).first()
             if user:
+                act_code = generate_random_number()
+                request.session['act_code'] = act_code
+                data = {'bodyId': 0000, 'to': f'{user_phone}', 'args': [str(act_code)]}
+                response = requests.post('http://127.0.0.1:8000', json=data)
+                messages.success(request, 'شماره موبایل شما با موفقیت پیدا شد')
                 return redirect('account:active_code')
             else:
                 messages.error(request, 'شماره تلفن یافت نشد')
@@ -123,9 +128,7 @@ class ActiveCode(View):
 
     def get(self, request, *args, **kwargs):
         form = ActiveCodeForm()
-        act_code = generate_random_number()
-        print(act_code)
-        request.session['act_code'] = act_code
+        
         return render(request, self.template_name, context={'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -134,8 +137,7 @@ class ActiveCode(View):
         print(user_phone)
         code = form.data['active_code']
         act_code = request.session.get('act_code')
-        data = {'bodyId': 0000, 'to': f'{user_phone}', 'args': [str(act_code)]}
-        response = requests.post('http://127.0.0.1:8000', json=data)
+        
         if code == act_code:
             return redirect('account:change_pass')
         else:
@@ -158,7 +160,7 @@ class ChangePassView(View):
             user.set_password(form.cleaned_data['password'])
             user.save()
             messages.success(request, 'رمز شما با موفقیت تغییر یافت')
-            return redirect('main:index')
+            return redirect('account:login')
         else:
             messages.error(request, 'فرم معتبر نمی باشد')
             return render(request, self.template_name, context={'form': form})
